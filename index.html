@@ -10,7 +10,7 @@
 body {
   margin: 0;
   font-family: Arial, sans-serif;
-  background: #4e6a8a; /* slightly darker blue */
+  background: #5a7fab; /* soft blue */
   overflow-x: hidden;
   text-align: center;
   color: #fff;
@@ -23,6 +23,8 @@ body {
 
 /* ---- Intro ---- */
 #intro {
+  cursor: pointer;
+  width: 100%;
   height: 100vh;
   display: flex;
   flex-direction: column;
@@ -30,6 +32,7 @@ body {
   align-items: center;
   font-family: 'Fredoka One', cursive;
   font-size: 2rem;
+  text-align: center;
 }
 
 /* ---- Letter + Ask ---- */
@@ -159,6 +162,7 @@ body {
   100% { transform: translate(0, 100vh) rotate(360deg) scale(1);}
 }
 
+/* Buttons */
 button {
   padding: 0.8rem 1.5rem;
   font-size: 1rem;
@@ -237,68 +241,4 @@ const continueLetter=document.getElementById('continueLetter');
 const ask=document.getElementById('ask');
 const askText=document.getElementById('askText');
 const boxes=document.getElementById('boxes');
-const greenBox=document.getElementById('greenBox');
-const redBox=document.getElementById('redBox');
-const boxMessage=document.getElementById('boxMessage');
-const heartScene=document.getElementById('heartScene');
-const heart=document.getElementById('heart');
-const secret=document.getElementById('secret');
-const finalNote=document.getElementById('finalNote');
-const music=document.getElementById('music');
-
-// Scene helper
-function showScene(scene){
-  scenes.forEach(s=>s.classList.remove('active'));
-  scene.classList.add('active');
-}
-
-// Typewriter effect
-function typeWriter(element, text, callback) {
-  let i=0;
-  element.textContent='';
-  let interval=setInterval(()=>{
-    element.textContent += text.charAt(i);
-    i++;
-    if(i>=text.length){ clearInterval(interval); if(callback) callback(); }
-  },25);
-}
-
-// Intro click
-intro.addEventListener('click',()=>{
-  music.volume=0.12;
-  music.play();
-  showScene(letter);
-  typeWriter(letterText,`To Mirabel,
-It's so crazy how these past months have gone by so quickly, and they have been the best months of the entire year and I owe that to you. It has been 61 days filled with love, happiness, and laughter and I couldn't think of any other person to experience that with besides you. You mean the absolute world to me and my love for you grows more with each passing day.
-Thank you for choosing to stay with me and for making each moment a memorable one. I promise to always do my best, and more, to make you feel safe, loved, appreciated, and cared for, like the Queen you are. And just like the lotus, I pray you keep rising out of any muddy waters/situations, the ones you share and the ones you don't, and continue shining ever so beautifully. I'm so excited for all the moments we'll share and the growth we'll experience together. I love you a million♡`);
-});
-
-// Continue letter
-continueLetter.addEventListener('click',()=>{
-  showScene(ask);
-  showScene(boxes);
-  typeWriter(askText,`I had planned to wait until we met to properly ask you so I could make it special for you but when you called me your boyfriend three nights ago it melted my heart, but I still felt bad that I hadn't asked you out yet.
-Now I ask, my sweet Mirabel, will you be my girlfriend?`);
-});
-
-// Confetti
-function confettiEffect(){
-  for(let i=0;i<60;i++){
-    const c=document.createElement('div');
-    c.classList.add('confetti');
-    c.style.backgroundColor=['#ff0','#f0f','#0ff','#0f0','#f00','#ff69b4','#8a2be2'][Math.floor(Math.random()*7)];
-    c.style.width=(5+Math.random()*10)+'px';
-    c.style.height=(5+Math.random()*10)+'px';
-    c.style.left=Math.random()*window.innerWidth+'px';
-    c.style.top=Math.random()*50+'px';
-    c.style.transform = `rotate(${Math.random()*360}deg)`;
-    document.body.appendChild(c);
-    setTimeout(()=>{c.remove()},2500);
-  }
-}
-
-// Box click
-function boxClick(color){
-  confettiEffect();
-  boxMessage.style.opacity = 1;
-  if(color==='
+const greenBox=document.getElement
