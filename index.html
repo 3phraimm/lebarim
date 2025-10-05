@@ -63,7 +63,7 @@
             justify-content: center;
             width: 90%;
             max-width: 600px;
-            min-height: 80vh;
+            min-height: 100vh;
             padding: 20px;
             text-align: center;
             animation: fadeIn 1.5s ease-in-out;
@@ -82,6 +82,8 @@
             max-width: 500px;
             position: relative;
             margin-bottom: 20px;
+            max-height: 80vh;
+            overflow-y: auto;
         }
         
         .paper::before {
@@ -282,6 +284,10 @@
             justify-content: center;
             cursor: pointer;
             z-index: 100;
+            transition: 0.3s ease;
+        }
+        .music-control.active {
+            background: rgba(255,255,255,0.6);
         }
         
         @keyframes fadeIn {
@@ -328,7 +334,7 @@
     </style>
 </head>
 <body>
-    <!-- Lotus petals in background -->
+    <!-- Lotus petals background -->
     <div class="petals-bg">
         <div class="petal petal1">🌸</div>
         <div class="petal petal2">🌸</div>
@@ -344,13 +350,13 @@
         <div class="petal petal12">🌸</div>
     </div>
     
-    <!-- Page 1: Initial page -->
+    <!-- Page 1 -->
     <div class="page active" id="page1">
         <h1>sike, you're the friend😏</h1>
         <p class="tap-continue">(tap to continue)</p>
     </div>
     
-    <!-- Page 2: First message -->
+    <!-- Page 2 -->
     <div class="page" id="page2">
         <div class="paper">
             <p class="cursive-message">
@@ -362,7 +368,7 @@
         <button class="continue-btn" onclick="nextPage(3)">Continue💙</button>
     </div>
     
-    <!-- Page 3: Question page -->
+    <!-- Page 3 -->
     <div class="page" id="page3">
         <div class="paper">
             <p class="cursive-message">
@@ -386,7 +392,7 @@
         </div>
     </div>
     
-    <!-- Page 4: Heart page -->
+    <!-- Page 4 -->
     <div class="page" id="page4">
         <div class="heart-container">
             <div class="heart">❤️</div>
@@ -394,7 +400,7 @@
         </div>
     </div>
     
-    <!-- Page 5: Secret page -->
+    <!-- Page 5 -->
     <div class="page" id="page5">
         <div class="secret-text">I LOVE YOU SO MUCH</div>
         <p class="promise-text">(i promise to ask properly in person)</p>
@@ -404,7 +410,7 @@
         </div>
     </div>
     
-    <!-- Popup for responses -->
+    <!-- Popup -->
     <div class="popup" id="popup">
         <p id="popup-text"></p>
     </div>
@@ -414,146 +420,59 @@
         <span id="music-icon">🔊</span>
     </div>
     
-    <!-- Background Music -->
+    <!-- Background Music (Calm Romantic Piano) -->
     <audio id="bg-music" loop>
-        <!-- Multiple fallback options for music -->
-        <source src="https://assets.mixkit.co/music/preview/mixkit-slow-romantic-rnb-108.mp3" type="audio/mpeg">
-        <source src="https://www.soundjay.com/music/sounds-346.mp3" type="audio/mpeg">
+        <source src="https://assets.mixkit.co/music/preview/mixkit-romantic-piano-theme-46.mp3" type="audio/mpeg">
     </audio>
 
     <script>
-        // Page navigation
         function nextPage(pageNum) {
-            document.querySelectorAll('.page').forEach(page => {
-                page.classList.remove('active');
-            });
+            document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
             document.getElementById(`page${pageNum}`).classList.add('active');
         }
-        
-        // Start music on first tap
+
+        // fade-in effect for music
+        function fadeInMusic() {
+            const music = document.getElementById('bg-music');
+            let vol = 0;
+            music.volume = 0;
+            const fade = setInterval(() => {
+                if (vol < 0.5) {
+                    vol += 0.01;
+                    music.volume = vol;
+                } else clearInterval(fade);
+            }, 120);
+        }
+
+        // first tap starts music
         let musicStarted = false;
         document.getElementById('page1').addEventListener('click', function() {
             if (!musicStarted) {
                 const music = document.getElementById('bg-music');
-                music.volume = 0.5; // Set volume to 50%
-                music.play().catch(e => {
-                    console.log("Audio play failed:", e);
-                    // Try alternative approach
-                    document.body.addEventListener('click', function tryPlay() {
-                        music.play();
-                        document.body.removeEventListener('click', tryPlay);
-                    });
-                });
+                music.play().then(() => {
+                    fadeInMusic();
+                }).catch(() => {});
                 musicStarted = true;
             }
             nextPage(2);
         });
-        
-        // Heart page tap to reveal secret
-        document.getElementById('page4').addEventListener('click', function() {
-            nextPage(5);
-        });
-        
-        // Handle response to question
+
+        // heart to secret
+        document.getElementById('page4').addEventListener('click', () => nextPage(5));
+
         function handleResponse(type) {
             createConfetti();
-            
             const popup = document.getElementById('popup');
             const popupText = document.getElementById('popup-text');
-            
-            if (type === 'green') {
-                popupText.textContent = "didn't think green was your color😏";
-            } else {
-                popupText.textContent = "i knew you wouldn't follow society's norm😼";
-            }
-            
+            popupText.textContent = type === 'green'
+                ? "didn't think green was your color😏"
+                : "i knew you wouldn't follow society's norm😼";
             popup.style.display = 'block';
-            
-            setTimeout(() => {
-                popup.style.display = 'none';
-                nextPage(4);
-            }, 3000);
+            setTimeout(() => { popup.style.display = 'none'; nextPage(4); }, 3000);
         }
-        
-        // Create confetti effect
+
         function createConfetti() {
-            const colors = ['#f94144', '#f3722c', '#f8961e', '#f9c74f', '#90be6d', '#43aa8b', '#577590'];
-            
-            for (let i = 0; i < 150; i++) {
+            const colors = ['#f06292','#ba68c8','#7986cb','#64b5f6','#81c784','#fff176'];
+            for (let i = 0; i < 120; i++) {
                 const confetti = document.createElement('div');
-                confetti.className = 'confetti';
-                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-                confetti.style.left = Math.random() * 100 + 'vw';
-                confetti.style.top = Math.random() * 100 + 'vh';
-                confetti.style.transform = `rotate(${Math.random() * 360}deg)`;
-                confetti.style.width = Math.random() * 10 + 5 + 'px';
-                confetti.style.height = Math.random() * 10 + 5 + 'px';
-                confetti.style.opacity = '1';
-                
-                document.body.appendChild(confetti);
-                
-                // Animation
-                const animation = confetti.animate([
-                    { transform: `translate(0, 0) rotate(0deg)`, opacity: 1 },
-                    { transform: `translate(${Math.random() * 200 - 100}px, ${Math.random() * 200 + 100}px) rotate(${Math.random() * 360}deg)`, opacity: 0 }
-                ], {
-                    duration: Math.random() * 3000 + 2000,
-                    easing: 'cubic-bezier(0.1, 0.8, 0.2, 1)'
-                });
-                
-                animation.onfinish = () => {
-                    confetti.remove();
-                };
-            }
-        }
-        
-        // Restart the experience
-        function restart() {
-            createConfetti();
-            setTimeout(() => {
-                nextPage(1);
-            }, 1000);
-        }
-        
-        // Close the website
-        function closePage() {
-            createConfetti();
-            setTimeout(() => {
-                // Try to close the window
-                if (window.history.length > 1) {
-                    window.close();
-                } else {
-                    // Fallback - show thank you message
-                    document.body.innerHTML = '<div style="display:flex; justify-content:center; align-items:center; height:100vh; color:white; font-size:2rem; text-align:center;">Thank you for everything! ❤️<br><small>You can close this tab now</small></div>';
-                }
-            }, 1000);
-        }
-        
-        // Music control
-        function toggleMusic() {
-            const music = document.getElementById('bg-music');
-            const icon = document.getElementById('music-icon');
-            
-            if (music.paused) {
-                music.play();
-                icon.textContent = '🔊';
-            } else {
-                music.pause();
-                icon.textContent = '🔇';
-            }
-        }
-        
-        // Auto-start music on user interaction (for some browsers)
-        document.addEventListener('click', function() {
-            const music = document.getElementById('bg-music');
-            if (music.paused && !musicStarted) {
-                music.play().then(() => {
-                    musicStarted = true;
-                }).catch(e => {
-                    console.log("Auto-play prevented:", e);
-                });
-            }
-        });
-    </script>
-</body>
-</html>
+                confetti.className =
