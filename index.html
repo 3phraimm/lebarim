@@ -74,7 +74,7 @@
         }
         
         .paper {
-            background-color: #ffffff !important;
+            background-color: #ffffff;
             padding: 30px;
             border-radius: 10px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
@@ -264,6 +264,26 @@
             margin-top: 20px;
         }
         
+        .music-control {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 100;
+            transition: 0.3s ease;
+        }
+        
+        .music-control.active {
+            background: rgba(255,255,255,0.6);
+        }
+        
         @keyframes fadeIn {
             from { opacity: 0; }
             to { opacity: 1; }
@@ -389,9 +409,14 @@
         <p id="popup-text"></p>
     </div>
     
-    <!-- Background music (calm romantic piano) -->
+    <!-- Music control -->
+    <div class="music-control" onclick="toggleMusic()">
+        <span id="music-icon">🔊</span>
+    </div>
+    
+    <!-- Background Music - Slow tempo romantic R&B -->
     <audio id="bg-music" loop>
-        <source src="https://assets.mixkit.co/music/preview/mixkit-romantic-piano-theme-46.mp3" type="audio/mpeg">
+        <source src="https://assets.mixkit.co/music/preview/mixkit-slow-romantic-rnb-108.mp3" type="audio/mpeg">
     </audio>
 
     <script>
@@ -407,7 +432,13 @@
         let musicStarted = false;
         document.getElementById('page1').addEventListener('click', function() {
             if (!musicStarted) {
-                startMusic();
+                const music = document.getElementById('bg-music');
+                music.volume = 0.5;
+                music.play().catch(e => {
+                    console.log("Audio play failed:", e);
+                });
+                musicStarted = true;
+                document.querySelector('.music-control').classList.add('active');
             }
             nextPage(2);
         });
@@ -416,30 +447,6 @@
         document.getElementById('page4').addEventListener('click', function() {
             nextPage(5);
         });
-        
-        // startMusic now fades in smoothly to a low volume (0.3)
-        function startMusic() {
-            if (musicStarted) return;
-            const music = document.getElementById('bg-music');
-            music.volume = 0;
-            
-            music.play().then(() => {
-                musicStarted = true;
-                // fade in to 0.3 over ~3.6 seconds
-                let vol = 0;
-                const fade = setInterval(() => {
-                    if (vol < 0.3) {
-                        vol = +(vol + 0.01).toFixed(3);
-                        music.volume = Math.min(vol, 0.3);
-                    } else {
-                        clearInterval(fade);
-                    }
-                }, 120);
-            }).catch(error => {
-                console.log("Music blocked:", error);
-                // silent failure is fine — browser may block autoplay until another user gesture
-            });
-        }
         
         // Handle response to question
         function handleResponse(type) {
@@ -513,7 +520,22 @@
             }, 1000);
         }
         
-        // (No music-control UI — music starts automatically with a fade after the first tap.)
+        // Music control
+        function toggleMusic() {
+            const music = document.getElementById('bg-music');
+            const icon = document.getElementById('music-icon');
+            const control = document.querySelector('.music-control');
+            
+            if (music.paused) {
+                music.play();
+                icon.textContent = '🔊';
+                control.classList.add('active');
+            } else {
+                music.pause();
+                icon.textContent = '🔇';
+                control.classList.remove('active');
+            }
+        }
     </script>
 </body>
-    </html>
+            </html>
