@@ -9,23 +9,24 @@
 body {
   margin:0;
   font-family:Arial, sans-serif;
-  background:#6b9edc; /* lighter blue */
+  background:#a1c4fd; /* lighter blue */
   color:#000;
   overflow-x:hidden;
   text-align:center;
   position:relative;
+  min-height:100vh;
 }
 
-/* Lotus flowers */
+/* Stationary lotus flowers in background */
 .lotus {
   position:absolute;
   pointer-events:none;
   z-index:-1;
-  opacity:0.7;
+  opacity:0.6;
 }
 
 /* Scene containers */
-.scene {display:none; opacity:0; transition:opacity 0.7s;}
+.scene {display:none; opacity:0; transition:opacity 0.7s; height:100vh; display:flex; justify-content:center; align-items:center;}
 .scene.active {display:block; opacity:1;}
 
 /* White paper for text */
@@ -34,19 +35,19 @@ body {
   color:#000;
   font-weight:bold;
   max-width:90%;
-  margin:2rem auto;
   padding:2rem;
   border-radius:15px;
   box-shadow:0 8px 20px rgba(0,0,0,0.2);
   font-family:'Dancing Script', cursive;
   font-size:1.3rem;
   line-height:1.6;
+  text-align:left;
 }
 
 /* Intro */
 #intro {
   cursor:pointer;
-  width:100%; height:100vh;
+  width:100%; height:100%;
   display:flex; flex-direction:column; justify-content:center; align-items:center;
   font-family:'Fredoka One', cursive;
   font-size:2rem;
@@ -90,7 +91,7 @@ body {
   animation:pulse 1.2s infinite;
 }
 @keyframes pulse {0%,100%{transform:scale(1);}50%{transform:scale(1.3);}}
-#secret {display:none; color:#ff69b4; font-size:3rem; text-shadow:0 0 20px #ff69b4,0 0 40px #fff,0 0 60px #ff69b4; margin-top:1rem;}
+#secret {display:none; color:#ff69b4; font-size:2.8rem; text-shadow:0 0 20px #ff69b4,0 0 40px #fff,0 0 60px #ff69b4; margin-top:1rem;}
 #finalNote {display:none; font-family:'Fredoka One', cursive; font-size:1.2rem; margin-top:1rem;}
 #ilysm {display:none; font-family:'Fredoka One', cursive; font-size:2rem; color:#ff69b4; text-shadow:0 0 10px #fff,0 0 20px #ff69b4; margin-top:1rem;}
 
@@ -122,12 +123,8 @@ button {
 </head>
 <body>
 
-<!-- Lotus flowers in background -->
-<img src="https://i.ibb.co/fnQzhnr/lotus.png" class="lotus" style="top:50px; left:30px; width:100px;">
-<img src="https://i.ibb.co/fnQzhnr/lotus.png" class="lotus" style="top:200px; left:250px; width:70px;">
-<img src="https://i.ibb.co/fnQzhnr/lotus.png" class="lotus" style="top:400px; left:100px; width:90px;">
-<img src="https://i.ibb.co/fnQzhnr/lotus.png" class="lotus" style="top:100px; left:500px; width:80px;">
-<img src="https://i.ibb.co/fnQzhnr/lotus.png" class="lotus" style="top:350px; left:600px; width:60px;">
+<!-- Lotus background -->
+<div id="lotusContainer"></div>
 
 <!-- Scenes -->
 <div id="scene">
@@ -170,7 +167,7 @@ button {
   <div id="heartScene" class="scene">
     <div class="heart" id="heart">❤️</div>
     <p id="ilysm">I LOVE YOU SO MUCH 💖</p>
-    <h1 id="secret">I LOVE YOU SO MUCH</h1>
+    <h1 id="secret">Tap heart to know a secret 😘</h1>
     <p id="finalNote">(I will still ask properly in person babe)</p>
     <button onclick="restart()">Restart 🔄</button>
     <button onclick="end()">End ❌</button>
@@ -184,6 +181,18 @@ button {
 </audio>
 
 <script>
+// Scatter lotus flowers randomly
+const lotusContainer=document.getElementById('lotusContainer');
+for(let i=0;i<20;i++){
+  let lotus=document.createElement('img');
+  lotus.src='https://i.ibb.co/fnQzhnr/lotus.png';
+  lotus.className='lotus';
+  lotus.style.top=Math.random()*window.innerHeight+'px';
+  lotus.style.left=Math.random()*window.innerWidth+'px';
+  lotus.style.width=(50+Math.random()*100)+'px';
+  lotusContainer.appendChild(lotus);
+}
+
 // Scene management
 const scenes=document.querySelectorAll('.scene');
 function showScene(id){scenes.forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');}
@@ -191,8 +200,9 @@ function showScene(id){scenes.forEach(s=>s.classList.remove('active'));document.
 // Intro
 document.getElementById('intro').addEventListener('click', ()=>{
   showScene('letter');
-  document.getElementById('music').volume=0.1;
-  document.getElementById('music').play();
+  const music=document.getElementById('music');
+  music.volume=0.1;
+  music.play();
 });
 
 // Letter -> Ask
@@ -219,7 +229,7 @@ document.getElementById('redBox').addEventListener('click', ()=>{
 
 // Heart interaction
 document.getElementById('heart').addEventListener('click', ()=>{
-  document.getElementById('secret').style.display='block';
+  document.getElementById('secret').textContent="I LOVE YOU SO MUCH 💖";
   document.getElementById('ilysm').style.display='block';
   document.getElementById('finalNote').style.display='block';
 });
