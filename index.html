@@ -105,15 +105,14 @@ body {
 /* Petals */
 .petal {
   position: absolute;
-  width: 30px;
-  height: 30px;
   background: url('https://i.ibb.co/fnQzhnr/lotus.png') no-repeat center/contain;
-  animation: float 8s linear infinite;
   opacity: 0.7;
+  animation: float 8s linear infinite;
 }
 @keyframes float {
-  0% {transform: translateY(0) rotate(0deg);}
-  100% {transform: translateY(100vh) rotate(360deg);}
+  0% { transform: translate(0, 0) rotate(0deg); }
+  50% { transform: translate(var(--sway), 50vh) rotate(180deg); }
+  100% { transform: translate(0, 100vh) rotate(360deg); }
 }
 
 button {
@@ -196,7 +195,7 @@ const music=document.getElementById('music');
 
 intro.addEventListener('click',()=>{
   intro.style.display='none';
-  music.volume=0.3;
+  music.volume=0.25;
   music.play();
   letter.style.display='block';
 });
@@ -239,12 +238,19 @@ heart.addEventListener('click',()=>{
   finalNote.style.display='block';
 });
 
-// Floating petals across the page
+// Floating lotus petals naturally
 for(let i=0;i<15;i++){
   const petal=document.createElement('div');
   petal.classList.add('petal');
   petal.style.left=Math.random()*100+'vw';
-  petal.style.animationDuration=(8+Math.random()*5)+'s';
+  const size=20+Math.random()*20; // random size
+  petal.style.width=size+'px';
+  petal.style.height=size+'px';
+  const duration=8+Math.random()*5; // float duration
+  petal.style.animationDuration=duration+'s';
+  petal.style.animationDelay=Math.random()*5+'s'; // random start
+  const sway=Math.random()*100-50; // horizontal drift
+  petal.style.setProperty('--sway', sway+'px');
   document.body.appendChild(petal);
 }
 </script>
