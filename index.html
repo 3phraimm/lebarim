@@ -16,6 +16,14 @@ body {
   position:relative;
 }
 
+/* Lotus flowers */
+.lotus {
+  position:absolute;
+  pointer-events:none;
+  z-index:-1;
+  opacity:0.7;
+}
+
 /* Scene containers */
 .scene {display:none; opacity:0; transition:opacity 0.7s;}
 .scene.active {display:block; opacity:1;}
@@ -24,6 +32,7 @@ body {
 .paper {
   background:#fff;
   color:#000;
+  font-weight:bold;
   max-width:90%;
   margin:2rem auto;
   padding:2rem;
@@ -32,10 +41,7 @@ body {
   font-family:'Dancing Script', cursive;
   font-size:1.3rem;
   line-height:1.6;
-  opacity:0;
-  animation:fadeIn 1s forwards;
 }
-@keyframes fadeIn {to{opacity:1;}}
 
 /* Intro */
 #intro {
@@ -69,23 +75,24 @@ body {
 .green {background-color:#7be87b;}
 .red {background-color:#ff7b7b;}
 
+/* Box messages */
+#boxMessage {font-size:1.2rem; margin-top:1rem; opacity:0; transition:opacity 0.5s;}
+.legend {display:flex; justify-content:center; gap:2rem; font-size:0.85rem; opacity:0.8; margin-top:1rem;}
+.legend-item {display:flex; align-items:center; gap:0.5rem;}
+.legend-item .box {width:25px; height:25px;}
+
 /* Heart scene */
 .heart {
   font-size:8rem;
   cursor:pointer;
   margin-top:2rem;
-  text-shadow: 0 0 20px #ff69b4, 0 0 30px #ff69b4, 0 0 40px #ff69b4;
+  text-shadow:0 0 20px #ff69b4,0 0 30px #ff69b4,0 0 40px #ff69b4;
   animation:pulse 1.2s infinite;
 }
 @keyframes pulse {0%,100%{transform:scale(1);}50%{transform:scale(1.3);}}
-#secret {
-  display:none;
-  color:#ff69b4;
-  font-size:3rem;
-  text-shadow: 0 0 20px #ff69b4,0 0 40px #fff,0 0 60px #ff69b4;
-  margin-top:1rem;
-}
+#secret {display:none; color:#ff69b4; font-size:3rem; text-shadow:0 0 20px #ff69b4,0 0 40px #fff,0 0 60px #ff69b4; margin-top:1rem;}
 #finalNote {display:none; font-family:'Fredoka One', cursive; font-size:1.2rem; margin-top:1rem;}
+#ilysm {display:none; font-family:'Fredoka One', cursive; font-size:2rem; color:#ff69b4; text-shadow:0 0 10px #fff,0 0 20px #ff69b4; margin-top:1rem;}
 
 /* Buttons */
 button {
@@ -103,20 +110,24 @@ button {
 .confetti {position:absolute; width:8px; height:8px; opacity:0.9; animation:confetti-fall 2s linear forwards;}
 @keyframes confetti-fall {0%{transform:translateY(0) rotate(0deg);}100%{transform:translateY(500px) rotate(360deg);}}
 
-/* Lotus petals */
-.petal {position:absolute; background:url('https://i.ibb.co/fnQzhnr/lotus.png') no-repeat center/contain; width:40px;height:40px; opacity:0.7; animation: float 8s linear infinite;}
-@keyframes float {0%{transform:translate(0,0) rotate(0deg) scale(1);}50%{transform:translate(var(--sway),50vh) rotate(180deg) scale(1.1);}100%{transform:translate(0,100vh) rotate(360deg) scale(1);}}
-
 /* Responsive */
 @media(max-width:480px){
   .box{width:60px;height:60px;}
   .heart{font-size:6rem;}
   #secret{font-size:2.5rem;}
+  #ilysm{font-size:1.5rem;}
   .paper{font-size:1.1rem; padding:1.5rem;}
 }
 </style>
 </head>
 <body>
+
+<!-- Lotus flowers in background -->
+<img src="https://i.ibb.co/fnQzhnr/lotus.png" class="lotus" style="top:50px; left:30px; width:100px;">
+<img src="https://i.ibb.co/fnQzhnr/lotus.png" class="lotus" style="top:200px; left:250px; width:70px;">
+<img src="https://i.ibb.co/fnQzhnr/lotus.png" class="lotus" style="top:400px; left:100px; width:90px;">
+<img src="https://i.ibb.co/fnQzhnr/lotus.png" class="lotus" style="top:100px; left:500px; width:80px;">
+<img src="https://i.ibb.co/fnQzhnr/lotus.png" class="lotus" style="top:350px; left:600px; width:60px;">
 
 <!-- Scenes -->
 <div id="scene">
@@ -147,12 +158,18 @@ button {
         <div class="box green" id="greenBox">💚</div>
         <div class="box red" id="redBox">❤️</div>
       </div>
+      <div id="boxMessage"></div>
+      <div class="legend">
+        <div class="legend-item"><div class="box green"></div><p>Yes</p></div>
+        <div class="legend-item"><div class="box red"></div><p>No</p></div>
+      </div>
     </div>
   </div>
 
   <!-- Heart -->
   <div id="heartScene" class="scene">
     <div class="heart" id="heart">❤️</div>
+    <p id="ilysm">I LOVE YOU SO MUCH 💖</p>
     <h1 id="secret">I LOVE YOU SO MUCH</h1>
     <p id="finalNote">(I will still ask properly in person babe)</p>
     <button onclick="restart()">Restart 🔄</button>
@@ -160,6 +177,11 @@ button {
   </div>
 
 </div>
+
+<!-- Background music -->
+<audio id="music" loop>
+  <source src="https://www.bensound.com/bensound-music/bensound-summer.mp3" type="audio/mpeg">
+</audio>
 
 <script>
 // Scene management
@@ -169,7 +191,8 @@ function showScene(id){scenes.forEach(s=>s.classList.remove('active'));document.
 // Intro
 document.getElementById('intro').addEventListener('click', ()=>{
   showScene('letter');
-  document.querySelector('#letter .paper').style.opacity=1;
+  document.getElementById('music').volume=0.1;
+  document.getElementById('music').play();
 });
 
 // Letter -> Ask
@@ -181,17 +204,23 @@ document.getElementById('continueLetter').addEventListener('click', ()=>{
 
 // Option boxes
 document.getElementById('greenBox').addEventListener('click', ()=>{
+  document.getElementById('boxMessage').textContent="didn't think green was your color 😏";
+  document.getElementById('boxMessage').style.opacity=1;
   createConfetti();
-  setTimeout(()=>showScene('heartScene'),1200);
+  setTimeout(()=>showScene('heartScene'),1500);
 });
+
 document.getElementById('redBox').addEventListener('click', ()=>{
+  document.getElementById('boxMessage').textContent="knew you wouldn't follow society's norm 😼";
+  document.getElementById('boxMessage').style.opacity=1;
   createConfetti();
-  setTimeout(()=>showScene('heartScene'),1200);
+  setTimeout(()=>showScene('heartScene'),1500);
 });
 
 // Heart interaction
 document.getElementById('heart').addEventListener('click', ()=>{
   document.getElementById('secret').style.display='block';
+  document.getElementById('ilysm').style.display='block';
   document.getElementById('finalNote').style.display='block';
 });
 
@@ -207,20 +236,10 @@ function createConfetti(){
   }
 }
 
-// Lotus petals
-for(let i=0;i<10;i++){
-  let p=document.createElement('div');
-  p.className='petal';
-  p.style.left=Math.random()*100+'vw';
-  p.style.top=Math.random()*-100+'px';
-  p.style.setProperty('--sway',(Math.random()*100-50)+'px');
-  document.body.appendChild(p);
-}
-
 // Restart / End
 function restart(){location.reload();}
 function end(){alert("Thanks for viewing! ❤️");}
 </script>
 
 </body>
-  </html>
+</html>
