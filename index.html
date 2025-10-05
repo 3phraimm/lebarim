@@ -426,53 +426,122 @@
     </audio>
 
     <script>
+        // Page navigation
         function nextPage(pageNum) {
-            document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.remove('active');
+            });
             document.getElementById(`page${pageNum}`).classList.add('active');
         }
-
-        // fade-in effect for music
-        function fadeInMusic() {
-            const music = document.getElementById('bg-music');
-            let vol = 0;
-            music.volume = 0;
-            const fade = setInterval(() => {
-                if (vol < 0.5) {
-                    vol += 0.01;
-                    music.volume = vol;
-                } else clearInterval(fade);
-            }, 120);
-        }
-
-        // first tap starts music
+        
+        // Start music on first tap
         let musicStarted = false;
         document.getElementById('page1').addEventListener('click', function() {
             if (!musicStarted) {
                 const music = document.getElementById('bg-music');
-                music.play().then(() => {
-                    fadeInMusic();
-                }).catch(() => {});
+                music.volume = 0.5;
+                music.play().catch(e => {
+                    console.log("Audio play failed:", e);
+                });
                 musicStarted = true;
+                document.querySelector('.music-control').classList.add('active');
             }
             nextPage(2);
         });
-
-        // heart to secret
-        document.getElementById('page4').addEventListener('click', () => nextPage(5));
-
+        
+        // Heart page tap to reveal secret
+        document.getElementById('page4').addEventListener('click', function() {
+            nextPage(5);
+        });
+        
+        // Handle response to question
         function handleResponse(type) {
             createConfetti();
+            
             const popup = document.getElementById('popup');
             const popupText = document.getElementById('popup-text');
-            popupText.textContent = type === 'green'
-                ? "didn't think green was your color😏"
-                : "i knew you wouldn't follow society's norm😼";
+            
+            if (type === 'green') {
+                popupText.textContent = "didn't think green was your color😏";
+            } else {
+                popupText.textContent = "i knew you wouldn't follow society's norm😼";
+            }
+            
             popup.style.display = 'block';
-            setTimeout(() => { popup.style.display = 'none'; nextPage(4); }, 3000);
+            
+            setTimeout(() => {
+                popup.style.display = 'none';
+                nextPage(4);
+            }, 3000);
         }
-
+        
+        // Create confetti effect
         function createConfetti() {
-            const colors = ['#f06292','#ba68c8','#7986cb','#64b5f6','#81c784','#fff176'];
-            for (let i = 0; i < 120; i++) {
+            const colors = ['#f94144', '#f3722c', '#f8961e', '#f9c74f', '#90be6d', '#43aa8b', '#577590'];
+            
+            for (let i = 0; i < 150; i++) {
                 const confetti = document.createElement('div');
-                confetti.className =
+                confetti.className = 'confetti';
+                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.left = Math.random() * 100 + 'vw';
+                confetti.style.top = Math.random() * 100 + 'vh';
+                confetti.style.transform = `rotate(${Math.random() * 360}deg)`;
+                confetti.style.width = Math.random() * 10 + 5 + 'px';
+                confetti.style.height = Math.random() * 10 + 5 + 'px';
+                confetti.style.opacity = '1';
+                
+                document.body.appendChild(confetti);
+                
+                // Animation
+                const animation = confetti.animate([
+                    { transform: `translate(0, 0) rotate(0deg)`, opacity: 1 },
+                    { transform: `translate(${Math.random() * 200 - 100}px, ${Math.random() * 200 + 100}px) rotate(${Math.random() * 360}deg)`, opacity: 0 }
+                ], {
+                    duration: Math.random() * 3000 + 2000,
+                    easing: 'cubic-bezier(0.1, 0.8, 0.2, 1)'
+                });
+                
+                animation.onfinish = () => {
+                    confetti.remove();
+                };
+            }
+        }
+        
+        // Restart the experience
+        function restart() {
+            createConfetti();
+            setTimeout(() => {
+                nextPage(1);
+            }, 1000);
+        }
+        
+        // Close the website
+        function closePage() {
+            createConfetti();
+            setTimeout(() => {
+                // Try to close the window
+                window.close();
+                // Fallback message
+                document.body.innerHTML = '<div style="display:flex; justify-content:center; align-items:center; height:100vh; color:white; font-size:2rem; text-align:center;">Thank you for everything! ❤️<br><small>You can close this tab now</small></div>';
+            }, 1000);
+        }
+        
+        // Music control
+        function toggleMusic() {
+            const music = document.getElementById('bg-music');
+            const icon = document.getElementById('music-icon');
+            const control = document.querySelector('.music-control');
+            
+            if (music.paused) {
+                music.play();
+                icon.textContent = '🔊';
+                control.classList.add('active');
+            } else {
+                music.pause();
+                icon.textContent = '🔇';
+                control.classList.remove('active');
+            }
+        }
+    </script>
+</body>
+</html>
