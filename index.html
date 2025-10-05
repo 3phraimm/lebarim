@@ -74,7 +74,7 @@
         }
         
         .paper {
-            background-color: #ffffff;
+            background-color: #ffffff !important;
             padding: 30px;
             border-radius: 10px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
@@ -284,21 +284,6 @@
             background: rgba(255,255,255,0.6);
         }
         
-        .sound-alert {
-            position: fixed;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(255,255,255,0.9);
-            padding: 10px 20px;
-            border-radius: 25px;
-            font-size: 0.9rem;
-            color: #333;
-            z-index: 1000;
-            display: none;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-        }
-        
         @keyframes fadeIn {
             from { opacity: 0; }
             to { opacity: 1; }
@@ -343,11 +328,6 @@
     </style>
 </head>
 <body>
-    <!-- Sound Alert -->
-    <div class="sound-alert" id="soundAlert">
-        🔊 Tap to enable sound
-    </div>
-    
     <!-- Lotus petals background -->
     <div class="petals-bg">
         <div class="petal petal1">🌸</div>
@@ -434,12 +414,9 @@
         <span id="music-icon">🔇</span>
     </div>
     
-    <!-- Background Music with multiple sources -->
-    <audio id="bg-music" loop preload="auto">
-        <!-- Multiple fallback sources -->
-        <source src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_d5bcf6f5f5.mp3?filename=soft-romantic-background-music-amp-serenity-143102.mp3" type="audio/mpeg">
+    <!-- Simple background music -->
+    <audio id="bg-music" loop>
         <source src="https://assets.mixkit.co/music/preview/mixkit-romantic-piano-theme-46.mp3" type="audio/mpeg">
-        <!-- Base64 encoded fallback audio (very short romantic piano snippet) -->
     </audio>
 
     <script>
@@ -450,15 +427,6 @@
             });
             document.getElementById(`page${pageNum}`).classList.add('active');
         }
-        
-        // Show sound alert
-        setTimeout(() => {
-            const alert = document.getElementById('soundAlert');
-            alert.style.display = 'block';
-            setTimeout(() => {
-                alert.style.display = 'none';
-            }, 5000);
-        }, 1000);
         
         // Start music on first tap
         let musicStarted = false;
@@ -474,39 +442,20 @@
             nextPage(5);
         });
         
-        // Music functions
+        // Simple music function
         function startMusic() {
             const music = document.getElementById('bg-music');
-            const icon = document.getElementById('music-icon');
-            const control = document.querySelector('.music-control');
+            music.volume = 0.3;
             
-            music.volume = 0.3; // Lower volume for better experience
-            
-            // Try to play music
-            const playPromise = music.play();
-            
-            if (playPromise !== undefined) {
-                playPromise.then(() => {
-                    // Music started successfully
-                    musicStarted = true;
-                    control.classList.add('active');
-                    icon.textContent = '🔊';
-                    console.log("Music started successfully");
-                }).catch(error => {
-                    // Music failed to start
-                    console.log("Music play failed:", error);
-                    showMusicError();
-                });
-            }
-        }
-        
-        function showMusicError() {
-            const alert = document.getElementById('soundAlert');
-            alert.textContent = "🔇 Sound blocked - tap music button";
-            alert.style.display = 'block';
-            setTimeout(() => {
-                alert.style.display = 'none';
-            }, 5000);
+            // Try to play
+            music.play().then(() => {
+                musicStarted = true;
+                document.querySelector('.music-control').classList.add('active');
+                document.getElementById('music-icon').textContent = '🔊';
+            }).catch(error => {
+                console.log("Music blocked:", error);
+                // Don't show annoying alerts
+            });
         }
         
         // Handle response to question
@@ -593,8 +542,7 @@
                     control.classList.add('active');
                     musicStarted = true;
                 }).catch(error => {
-                    console.log("Music play failed:", error);
-                    showMusicError();
+                    console.log("Music still blocked");
                 });
             } else {
                 music.pause();
@@ -602,14 +550,6 @@
                 control.classList.remove('active');
             }
         }
-        
-        // Try to start music automatically after user interaction
-        document.addEventListener('click', function initMusic() {
-            if (!musicStarted) {
-                startMusic();
-            }
-            document.removeEventListener('click', initMusic);
-        });
     </script>
 </body>
 </html>
