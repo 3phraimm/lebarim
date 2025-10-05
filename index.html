@@ -6,205 +6,85 @@
 <title>Proposal</title>
 <link href="https://fonts.googleapis.com/css2?family=Dancing+Script&family=Fredoka+One&display=swap" rel="stylesheet">
 <style>
-/* ---- General ---- */
 body {
-  margin: 0;
-  font-family: Arial, sans-serif;
-  background: #5a7fab; /* soft blue */
-  overflow-x: hidden;
-  text-align: center;
-  color: #fff;
-  position: relative;
+  margin:0;
+  font-family:Arial, sans-serif;
+  background:#547aa0;
+  color:#fff;
+  overflow-x:hidden;
+  text-align:center;
+  position:relative;
 }
+.scene {display:none; opacity:0; transition:opacity 0.5s;}
+.scene.active {display:block; opacity:1;}
 
-/* ---- Scene fade ---- */
-.scene { display: none; opacity:0; transition: opacity 1s; }
-.scene.active { display: block; opacity:1; }
-
-/* ---- Intro ---- */
+/* Intro */
 #intro {
-  cursor: pointer;
-  width: 100%;
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  font-family: 'Fredoka One', cursive;
-  font-size: 2rem;
-  text-align: center;
+  cursor:pointer;
+  width:100%; height:100vh;
+  display:flex; flex-direction:column; justify-content:center; align-items:center;
+  font-family:'Fredoka One', cursive;
+  font-size:2rem;
 }
 
-/* ---- Letter + Ask ---- */
-#letter, #ask {
-  padding: 1rem 2rem;
-  font-family: 'Dancing Script', cursive;
-  font-size: 1.3rem;
-  line-height: 1.6;
-}
+/* Letter / Ask */
+#letter, #ask { padding:1rem 2rem; font-family:'Dancing Script', cursive; font-size:1.3rem; line-height:1.6; }
+.typewriter {overflow:hidden; white-space:pre-wrap; border-right:3px solid #fff; display:inline-block;}
 
-/* Typing effect */
-.typewriter {
-  overflow: hidden;
-  white-space: pre-wrap;
-  border-right: 3px solid #fff;
-  display: inline-block;
-}
+/* Boxes */
+.box { width:80px; height:80px; border-radius:12px; cursor:pointer; margin:1rem auto; box-shadow:0 4px 8px rgba(0,0,0,0.3);}
+.green {background-color:#3ccf4e;}
+.red {background-color:#ff4747;}
+.options {display:flex; flex-direction:column; gap:2rem; align-items:center; margin-top:2rem;}
+#boxMessage {font-size:1.2rem; margin-top:1rem; opacity:0; transition:opacity 0.5s;}
+.legend {display:flex; justify-content:center; gap:2rem; font-size:0.85rem; opacity:0.8; margin-top:1rem;}
+.legend-item {display:flex; align-items:center; gap:0.5rem;}
+.legend-item .box {width:25px; height:25px;}
 
-/* ---- Boxes ---- */
-.box {
-  width: 80px;
-  height: 80px;
-  border-radius: 12px;
-  cursor: pointer;
-  margin: 1rem auto;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
-}
+/* Heart */
+.heart {font-size:5rem; cursor:pointer; margin-top:2rem; animation:pulse 1.2s infinite;}
+@keyframes pulse {0%,100%{transform:scale(1);}50%{transform:scale(1.25);}}
+#secret {display:none; color:#ff69b4; text-shadow:0 0 5px #fff,0 0 10px #ff69b4,0 0 20px #ff69b4; font-size:2.5rem;}
+#finalNote {display:none; font-family:'Fredoka One', cursive; font-size:1rem; margin-top:1rem; animation:pulseNote 1.5s infinite;}
+@keyframes pulseNote {0%,100%{transform:scale(1);}50%{transform:scale(1.05);}}
 
-.green { background-color: #3ccf4e; }
-.red { background-color: #ff4747; }
+/* Confetti */
+.confetti {position:absolute; width:8px; height:8px; opacity:0.9; animation:confetti-fall 2s linear forwards;}
+@keyframes confetti-fall {0%{transform:translateY(0) rotate(0deg);}100%{transform:translateY(500px) rotate(360deg);}}
 
-.options {
-  display: flex;
-  flex-direction: column;
-  gap: 2rem;
-  align-items: center;
-  margin-top: 2rem;
-}
+/* Lotus petals */
+.petal {position:absolute; background:url('https://i.ibb.co/fnQzhnr/lotus.png') no-repeat center/contain; opacity:0.7; animation: float 8s linear infinite;}
+@keyframes float {0%{transform:translate(0,0) rotate(0deg) scale(1);}50%{transform:translate(var(--sway),50vh) rotate(180deg) scale(1.1);}100%{transform:translate(0,100vh) rotate(360deg) scale(1);}}
 
-/* Box message */
-#boxMessage {
-  font-size: 1.2rem;
-  margin-top: 1rem;
-  opacity:0;
-  transition: opacity 0.6s;
-}
-
-/* Legend */
-.legend {
-  display: flex;
-  justify-content: center;
-  gap: 2rem;
-  font-size: 0.85rem;
-  opacity: 0.8;
-  margin-top: 1rem;
-}
-.legend-item {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-.legend-item .box { width: 25px; height: 25px; }
-
-/* ---- Heart Scene ---- */
-#heartScene { }
-.heart {
-  font-size: 5rem;
-  cursor: pointer;
-  margin-top: 2rem;
-  animation: pulse 1.2s infinite;
-}
-@keyframes pulse {
-  0%,100% {transform: scale(1);}
-  50% {transform: scale(1.25);}
-}
-
-/* ---- Secret glow/fade ---- */
-#secret {
-  display: none;
-  color: #ff69b4;
-  text-shadow: 0 0 5px #fff, 0 0 10px #ff69b4, 0 0 20px #ff69b4;
-  font-size: 2.5rem;
-}
-@keyframes glowFade {
-  0% { opacity: 0; text-shadow: 0 0 0 #fff; transform: scale(0.8);}
-  50% { opacity: 1; text-shadow: 0 0 10px #fff,0 0 20px #ff69b4,0 0 30px #ff69b4; transform: scale(1.1);}
-  100% { opacity: 1; text-shadow: 0 0 15px #fff,0 0 30px #ff69b4,0 0 45px #ff69b4; transform: scale(1);}
-}
-
-/* ---- Final note ---- */
-#finalNote {
-  display: none;
-  font-family: 'Fredoka One', cursive;
-  font-size: 1rem;
-  color: #fff;
-  margin-top: 1rem;
-  animation: pulseNote 1.5s infinite;
-}
-@keyframes pulseNote {
-  0%,100% {transform: scale(1);}
-  50% {transform: scale(1.05);}
-}
-
-/* ---- Confetti ---- */
-.confetti {
-  position: absolute;
-  width: 8px;
-  height: 8px;
-  opacity: 0.9;
-  animation: confetti-fall 2s linear forwards;
-}
-@keyframes confetti-fall {
-  0% {transform: translateY(0) rotate(0deg);}
-  100% {transform: translateY(500px) rotate(360deg);}
-}
-
-/* ---- Lotus petals ---- */
-.petal {
-  position: absolute;
-  background: url('https://i.ibb.co/fnQzhnr/lotus.png') no-repeat center/contain;
-  opacity: 0.7;
-  animation: float 8s linear infinite;
-}
-@keyframes float {
-  0% { transform: translate(0, 0) rotate(0deg) scale(1);}
-  50% { transform: translate(var(--sway), 50vh) rotate(180deg) scale(1.1);}
-  100% { transform: translate(0, 100vh) rotate(360deg) scale(1);}
-}
-
-/* Buttons */
-button {
-  padding: 0.8rem 1.5rem;
-  font-size: 1rem;
-  border: none;
-  border-radius: 8px;
-  background: #3ccf4e;
-  color: #fff;
-  cursor: pointer;
-  margin-top: 1rem;
-}
+/* Button */
+button {padding:0.8rem 1.5rem; font-size:1rem; border:none; border-radius:8px; background:#3ccf4e; color:#fff; cursor:pointer; margin-top:1rem;}
 
 /* Responsive */
-@media(max-width:480px){
-  .box{width:60px;height:60px;}
-  .heart{font-size:4rem;}
-  #secret{font-size:2rem;}
-  #letter,#ask{font-size:1.1rem;}
-}
+@media(max-width:480px){.box{width:60px;height:60px;} .heart{font-size:4rem;} #secret{font-size:2rem;} #letter,#ask{font-size:1.1rem;}}
 </style>
 </head>
 <body>
 
+<!-- Scenes -->
 <div id="scene">
-
-  <!-- Scene 1: Intro -->
+  <!-- Intro -->
   <div id="intro" class="scene active">
     <h1>sike, you're the friend 😼</h1>
-    <p style="font-size:1rem;">(tap to continue)</p>
+    <p>(tap to continue)</p>
   </div>
 
-  <!-- Scene 2: Letter -->
+  <!-- Letter -->
   <div id="letter" class="scene">
     <p class="typewriter" id="letterText"></p>
     <button id="continueLetter">Continue 💙</button>
   </div>
 
-  <!-- Scene 3: Ask Question -->
+  <!-- Ask -->
   <div id="ask" class="scene">
     <p class="typewriter" id="askText"></p>
   </div>
 
-  <!-- Scene 3: Boxes -->
+  <!-- Boxes -->
   <div id="boxes" class="scene">
     <div class="options">
       <div class="box green" id="greenBox"></div>
@@ -217,14 +97,13 @@ button {
     </div>
   </div>
 
-  <!-- Scene 4: Heart -->
+  <!-- Heart -->
   <div id="heartScene" class="scene">
     <div class="heart" id="heart">❤️</div>
     <p>(Tap to know a secret)</p>
     <h1 id="secret">I LOVE YOU SO MUCH</h1>
     <p id="finalNote">(I will still ask properly in person babe)</p>
   </div>
-
 </div>
 
 <audio id="music" loop>
@@ -232,8 +111,7 @@ button {
 </audio>
 
 <script>
-// Elements
-const scenes = document.querySelectorAll('.scene');
+const scenes=document.querySelectorAll('.scene');
 const intro=document.getElementById('intro');
 const letter=document.getElementById('letter');
 const letterText=document.getElementById('letterText');
@@ -241,4 +119,79 @@ const continueLetter=document.getElementById('continueLetter');
 const ask=document.getElementById('ask');
 const askText=document.getElementById('askText');
 const boxes=document.getElementById('boxes');
-const greenBox=document.getElement
+const greenBox=document.getElementById('greenBox');
+const redBox=document.getElementById('redBox');
+const boxMessage=document.getElementById('boxMessage');
+const heartScene=document.getElementById('heartScene');
+const heart=document.getElementById('heart');
+const secret=document.getElementById('secret');
+const finalNote=document.getElementById('finalNote');
+const music=document.getElementById('music');
+
+function showScene(id){scenes.forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');}
+function typeWriter(el,text,callback){let i=0; el.textContent=''; let interval=setInterval(()=>{el.textContent+=text.charAt(i); i++; if(i>=text.length){clearInterval(interval); if(callback)callback();}},25);}
+
+// Intro
+intro.addEventListener('click',()=>{
+  music.volume=0.12; music.play();
+  showScene('letter');
+  typeWriter(letterText,`To Mirabel,
+It's so crazy how these past months have gone by so quickly, and they have been the best months of the entire year and I owe that to you. It has been 61 days filled with love, happiness, and laughter and I couldn't think of any other person to experience that with besides you. You mean the absolute world to me and my love for you grows more with each passing day.
+Thank you for choosing to stay with me and for making each moment a memorable one. I promise to always do my best, and more, to make you feel safe, loved, appreciated, and cared for, like the Queen you are. And just like the lotus, I pray you keep rising out of any muddy waters/situations, the ones you share and the ones you don't, and continue shining ever so beautifully. I'm so excited for all the moments we'll share and the growth we'll experience together. I love you a million♡`);
+});
+
+// Letter -> Ask
+continueLetter.addEventListener('click',()=>{
+  showScene('ask');
+  typeWriter(askText,`I had planned to wait until we met to properly ask you so I could make it special for you but when you called me your boyfriend three nights ago it melted my heart, but I still felt bad that I hadn't asked you out yet.
+Now I ask, my sweet Mirabel, will you be my girlfriend?`, ()=> {
+    // After typing finishes, go to boxes scene
+    showScene('boxes');
+  });
+});
+
+// Box clicks
+greenBox.addEventListener('click', ()=>{
+  boxMessage.textContent = "didn't think green was your color 😏";
+  boxMessage.style.opacity = 1;
+  createConfetti();
+  setTimeout(()=> showScene('heartScene'), 1500);
+});
+
+redBox.addEventListener('click', ()=>{
+  boxMessage.textContent = "knew you wouldn't follow society's norm 😼";
+  boxMessage.style.opacity = 1;
+  createConfetti();
+  setTimeout(()=> showScene('heartScene'), 1500);
+});
+
+// Heart tap
+heart.addEventListener('click', ()=>{
+  secret.style.display = 'block';
+  finalNote.style.display = 'block';
+});
+
+// Confetti
+function createConfetti(){
+  for(let i=0;i<30;i++){
+    let c = document.createElement('div');
+    c.className = 'confetti';
+    c.style.left = Math.random()*window.innerWidth+'px';
+    c.style.backgroundColor = ['#ff4747','#3ccf4e','#ffd700','#ff69b4'][Math.floor(Math.random()*4)];
+    document.body.appendChild(c);
+    setTimeout(()=>c.remove(),2000);
+  }
+}
+
+// Lotus petals
+for(let i=0;i<10;i++){
+  let p = document.createElement('div');
+  p.className = 'petal';
+  p.style.left = Math.random()*100+'vw';
+  p.style.top = Math.random()*-100+'px';
+  p.style.setProperty('--sway', (Math.random()*100-50)+'px');
+  document.body.appendChild(p);
+  }
+  </script>
+</body>
+</html>
