@@ -264,26 +264,6 @@
             margin-top: 20px;
         }
         
-        .music-control {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            z-index: 100;
-            transition: 0.3s ease;
-        }
-        
-        .music-control.active {
-            background: rgba(255,255,255,0.6);
-        }
-        
         @keyframes fadeIn {
             from { opacity: 0; }
             to { opacity: 1; }
@@ -409,12 +389,7 @@
         <p id="popup-text"></p>
     </div>
     
-    <!-- Music control -->
-    <div class="music-control" onclick="toggleMusic()">
-        <span id="music-icon">🔇</span>
-    </div>
-    
-    <!-- Simple background music -->
+    <!-- Background music (calm romantic piano) -->
     <audio id="bg-music" loop>
         <source src="https://assets.mixkit.co/music/preview/mixkit-romantic-piano-theme-46.mp3" type="audio/mpeg">
     </audio>
@@ -442,19 +417,27 @@
             nextPage(5);
         });
         
-        // Simple music function
+        // startMusic now fades in smoothly to a low volume (0.3)
         function startMusic() {
+            if (musicStarted) return;
             const music = document.getElementById('bg-music');
-            music.volume = 0.3;
+            music.volume = 0;
             
-            // Try to play
             music.play().then(() => {
                 musicStarted = true;
-                document.querySelector('.music-control').classList.add('active');
-                document.getElementById('music-icon').textContent = '🔊';
+                // fade in to 0.3 over ~3.6 seconds
+                let vol = 0;
+                const fade = setInterval(() => {
+                    if (vol < 0.3) {
+                        vol = +(vol + 0.01).toFixed(3);
+                        music.volume = Math.min(vol, 0.3);
+                    } else {
+                        clearInterval(fade);
+                    }
+                }, 120);
             }).catch(error => {
                 console.log("Music blocked:", error);
-                // Don't show annoying alerts
+                // silent failure is fine — browser may block autoplay until another user gesture
             });
         }
         
@@ -530,26 +513,7 @@
             }, 1000);
         }
         
-        // Music control
-        function toggleMusic() {
-            const music = document.getElementById('bg-music');
-            const icon = document.getElementById('music-icon');
-            const control = document.querySelector('.music-control');
-            
-            if (music.paused) {
-                music.play().then(() => {
-                    icon.textContent = '🔊';
-                    control.classList.add('active');
-                    musicStarted = true;
-                }).catch(error => {
-                    console.log("Music still blocked");
-                });
-            } else {
-                music.pause();
-                icon.textContent = '🔇';
-                control.classList.remove('active');
-            }
-        }
+        // (No music-control UI — music starts automatically with a fade after the first tap.)
     </script>
 </body>
-</html>
+    </html>
