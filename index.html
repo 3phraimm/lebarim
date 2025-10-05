@@ -33,6 +33,7 @@
             height: 100%;
             z-index: -1;
             opacity: 0.3;
+            pointer-events: none;
         }
         
         .petal {
@@ -42,47 +43,18 @@
             font-size: 24px;
         }
         
-        .petal1 {
-            top: 10%;
-            left: 5%;
-            animation-delay: 0s;
-        }
-        
-        .petal2 {
-            top: 20%;
-            right: 10%;
-            animation-delay: 2s;
-        }
-        
-        .petal3 {
-            bottom: 15%;
-            left: 15%;
-            animation-delay: 4s;
-        }
-        
-        .petal4 {
-            bottom: 25%;
-            right: 5%;
-            animation-delay: 6s;
-        }
-        
-        .petal5 {
-            top: 40%;
-            left: 20%;
-            animation-delay: 8s;
-        }
-        
-        .petal6 {
-            top: 60%;
-            right: 20%;
-            animation-delay: 10s;
-        }
-        
-        .petal7 {
-            top: 30%;
-            right: 30%;
-            animation-delay: 12s;
-        }
+        .petal1 { top: 5%; left: 3%; animation-delay: 0s; }
+        .petal2 { top: 15%; right: 8%; animation-delay: 1s; }
+        .petal3 { bottom: 10%; left: 12%; animation-delay: 2s; }
+        .petal4 { bottom: 20%; right: 3%; animation-delay: 3s; }
+        .petal5 { top: 35%; left: 18%; animation-delay: 4s; }
+        .petal6 { top: 55%; right: 15%; animation-delay: 5s; }
+        .petal7 { top: 25%; right: 25%; animation-delay: 6s; }
+        .petal8 { top: 70%; left: 8%; animation-delay: 7s; }
+        .petal9 { top: 45%; right: 35%; animation-delay: 8s; }
+        .petal10 { bottom: 30%; left: 25%; animation-delay: 9s; }
+        .petal11 { top: 12%; left: 40%; animation-delay: 10s; }
+        .petal12 { bottom: 15%; right: 20%; animation-delay: 11s; }
         
         .page {
             display: none;
@@ -102,7 +74,7 @@
         }
         
         .paper {
-            background-color: #fff;
+            background-color: #ffffff;
             padding: 30px;
             border-radius: 10px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
@@ -135,14 +107,14 @@
             line-height: 1.6;
             text-align: left;
             font-family: 'Dancing Script', cursive;
-            color: #000;
+            color: #000000;
         }
         
         .normal-message {
             font-size: 1.1rem;
             line-height: 1.6;
             text-align: left;
-            color: #000;
+            color: #000000;
         }
         
         .continue-btn {
@@ -151,11 +123,13 @@
             border: none;
             padding: 12px 30px;
             border-radius: 50px;
-            font-size: 1.1rem;
+            font-size: 1.3rem;
             cursor: pointer;
             margin-top: 20px;
             transition: all 0.3s ease;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            font-family: 'Dancing Script', cursive;
+            font-weight: bold;
         }
         
         .continue-btn:hover {
@@ -363,6 +337,11 @@
         <div class="petal petal5">🌸</div>
         <div class="petal petal6">🌸</div>
         <div class="petal petal7">🌸</div>
+        <div class="petal petal8">🌸</div>
+        <div class="petal petal9">🌸</div>
+        <div class="petal petal10">🌸</div>
+        <div class="petal petal11">🌸</div>
+        <div class="petal petal12">🌸</div>
     </div>
     
     <!-- Page 1: Initial page -->
@@ -437,10 +416,11 @@
     
     <!-- Background Music -->
     <audio id="bg-music" loop>
-        <!-- Slow tempo R&B romantic music -->
+        <!-- Multiple fallback options for music -->
         <source src="https://assets.mixkit.co/music/preview/mixkit-slow-romantic-rnb-108.mp3" type="audio/mpeg">
+        <source src="https://www.soundjay.com/music/sounds-346.mp3" type="audio/mpeg">
     </audio>
-    
+
     <script>
         // Page navigation
         function nextPage(pageNum) {
@@ -454,8 +434,15 @@
         let musicStarted = false;
         document.getElementById('page1').addEventListener('click', function() {
             if (!musicStarted) {
-                document.getElementById('bg-music').play().catch(e => {
+                const music = document.getElementById('bg-music');
+                music.volume = 0.5; // Set volume to 50%
+                music.play().catch(e => {
                     console.log("Audio play failed:", e);
+                    // Try alternative approach
+                    document.body.addEventListener('click', function tryPlay() {
+                        music.play();
+                        document.body.removeEventListener('click', tryPlay);
+                    });
                 });
                 musicStarted = true;
             }
@@ -532,10 +519,13 @@
         function closePage() {
             createConfetti();
             setTimeout(() => {
-                // Close the window/tab
-                window.close();
-                // Fallback for browsers that don't allow window.close()
-                document.body.innerHTML = '<div style="display:flex; justify-content:center; align-items:center; height:100vh; color:white; font-size:2rem;">Thank you! ❤️</div>';
+                // Try to close the window
+                if (window.history.length > 1) {
+                    window.close();
+                } else {
+                    // Fallback - show thank you message
+                    document.body.innerHTML = '<div style="display:flex; justify-content:center; align-items:center; height:100vh; color:white; font-size:2rem; text-align:center;">Thank you for everything! ❤️<br><small>You can close this tab now</small></div>';
+                }
             }, 1000);
         }
         
@@ -566,4 +556,4 @@
         });
     </script>
 </body>
-    </html>
+</html>
